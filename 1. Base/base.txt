@@ -1,0 +1,101 @@
+CRUD 
+- create
+- update
+- read delete
+
+---------------------------------------------
+1. Show database
+
+-- show dbs
+
+
+2. Use databse 
+
+-- use <database name>
+
+
+3. Add document
+
+-- db.flightData.insertOne({
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  })
+
+-- db.flightData.insertMany([
+  {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  },
+  {
+    "departureAirport": "LHR",
+    "arrivalAirport": "TXL",
+    "aircraft": "Airbus A320",
+    "distance": 950,
+    "intercontinental": false
+  }
+])
+
+
+4. Get documents
+
+-- db.flightData.find() // returns cursor object - like with pagination
+-- db.flightData.find({distance: {$gt: 900}}).pretty() // greater than
+-- db.flightData.findOne({distance: {$gt: 900}}) // returns firtst
+
+
+5. Delete 
+
+-- db.flightData.deleteOne({departureAirport: "MUC"})
+-- db.flightData.deleteMany({something: "value"})
+
+
+6. Update document
+
+-- db.flightData.updateOne({something: "value"}, {$set:{marker: 'delete'}})
+-- db.flightData.updateMany({}, {$set:{marker: 'toDelete'}})
+
+Change all document
+
+-- db.flightData.replaceOne({_id: ObjectId("60329aafa676e700972e8839")}, {
+    "departureAirport": "MUC",
+    "arrivalAirport": "SFO",
+    "aircraft": "Airbus A380",
+    "distance": 12000,
+    "intercontinental": true
+  })
+
+
+-----------------------------------------------------
+Projection
+
+-- db.passangers.find({}, {name: 1}).pretty() // return name and _id
+-- db.passangers.find({}, {name: 1, _id: 0}).pretty() // to exclude _id
+
+
+-----------------------------------------------------
+Embedded documents
+{
+        "_id" : ObjectId("60329aafa676e700972e8839"),
+        "departureAirport" : "MUC",
+        "arrivalAirport" : "SFO",
+        "aircraft" : "Airbus A380",
+        "distance" : 12000,
+        "intercontinental" : true,
+        "status" : {
+                "description" : "on-time",
+                "lastUpdated" : "1 hour ago"
+        }
+}
+
+-- db.passangers.updateOne({_id: ObjectId("60329dadae6ce869d41b50e4")}, {$set: {hobbies: ["sports", "cookies"]}})
+
+Find throught embedded Documents
+-- db.passangers.find({hobbies: "sports"}).pretty()
+-- db.flightData.find({"status.description":"on-time"}).pretty()
+

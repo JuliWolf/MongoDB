@@ -143,3 +143,70 @@ Array: {"b": [...]}
 -----------------------------------------------------
 Relations
 
+One to One relations - better to use embedded document
+
+Aggregate
+db.books.aggregate([{$lookup: {from: "author", localField: "author", foreignField: "_id", as: "creators"}}])
+
+
+
+-----------------------------------------------------
+Validation
+
+
+db.createCollection(
+	"posts", 
+	{validator: {
+		$jsonSchema: {
+				bsonType: "object", 
+				required: ["title", "text", "creator", "comments"], 
+				properties: {
+					title: {
+						bsonType: "string",
+						description: "must be a string and is required"
+					},
+					text: {
+						bsonType: "string",
+						description: "must be a string and is required"
+					},
+					creator: {
+						bsonType: "objectId",
+						description: "must be an objectid and is required"
+					},
+					comments: {
+						bsonType: "array",
+						description: "must be an array and is required",
+						items: {
+							bsonType: "object",
+							required: ["text", "author"],
+							properties: {
+								text: {
+									bsonType: "string",
+									description: "must be a string and is required"
+								},
+								author: {
+									bsonType: "objectId",
+									description: "must be an objectid and is required"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+)
+
+// will throw an error
+-- db.posts.insertOne({
+	title: "My first post!", 
+	text: "this is my first post", 
+	tags: ["new", "tech"], 
+	creator: ObjectId("603385d4c360b01c3b4d7383"), 
+	comments: [{text: "I like this post!", author: 12}] 
+	})
+
+	
+We can change war level 
+Example in validation.json file
+

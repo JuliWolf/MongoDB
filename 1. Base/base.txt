@@ -119,3 +119,27 @@ ISODate: ISODate("2018-09-09")
 Timestamp: Timestamp(11421532)
 Embedded Document: {"a": {...}}
 Array: {"b": [...]}
+
+
+-- db.companies.insertOne(
+	{
+		name: "Fresh Apples Inc", 
+		isStartup: true, 
+		employees: 33, 
+		funding: 123456789123456789, 
+		details: {ceo: "Julia"}, 
+		tags: ["super", "perfect"],
+		foundingDate: new Date(), 
+		insertedAt: new Timestamp()
+	})
+
+
+-- db.numbers.insertOne({"a": NumberInt(1)})
+-- db.stats()
+-- typeof db.numbers.findOne().a
+
+
+
+-----------------------------------------------------
+Relations
+

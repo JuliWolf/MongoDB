@@ -3,7 +3,9 @@ CRUD
 - update
 - read delete
 
----------------------------------------------
+
+
+-----------------------------------------------------
 1. Show database
 
 -- show dbs
@@ -71,11 +73,13 @@ Change all document
   })
 
 
+
 -----------------------------------------------------
 Projection
 
 -- db.passangers.find({}, {name: 1}).pretty() // return name and _id
 -- db.passangers.find({}, {name: 1, _id: 0}).pretty() // to exclude _id
+
 
 
 -----------------------------------------------------
@@ -99,3 +103,19 @@ Find throught embedded Documents
 -- db.passangers.find({hobbies: "sports"}).pretty()
 -- db.flightData.find({"status.description":"on-time"}).pretty()
 
+
+
+-----------------------------------------------------
+Data Types
+
+Text : "Julia"
+Boolean: true/false
+Numbers: 
+	- Integer(int32): 55
+	- NumberLong(int64): 10000000000
+	- NumberDecimal: 12.99
+ObjectId: ObjectId("khjk)
+ISODate: ISODate("2018-09-09")
+Timestamp: Timestamp(11421532)
+Embedded Document: {"a": {...}}
+Array: {"b": [...]}

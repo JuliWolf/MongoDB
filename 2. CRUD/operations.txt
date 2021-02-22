@@ -1,0 +1,30 @@
+--------------------------------------------------
+.insert // Allow to add one or multiple documents
+.insertOne // Allow to add one document
+.insertMany // Allow to add many documents
+
+
+--------------------------------------------------
+Use Custom ID
+
+db.hoddies.insertMany([{_id: "sports", name: "Sports"}, {_id: "cooking", name: "Cooking"}, {_id: "cars", name: "cars"}])
+
+
+// Will throw an error
+db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}])
+
+// To change the way of inserting in db
+db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}], {ordered: false})
+
+
+--------------------------------------------------
+WriteConcern
+w: // 1/0 	1 - give time to the server to make action and return result
+			0 - just make a request to make something
+
+j:  // by default is false or underfined
+		true - engine will write all operations into file and then apply it in db(in order to save data if something happens with db connections)
+
+wtimeout: // how long server will wait to insert data
+
+db.persons.insertOne({name: "Aliya", age: 22}, {writeConcern: {w: 1, j: true, wtimeout: 41}})

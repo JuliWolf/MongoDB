@@ -207,6 +207,5 @@ db.createCollection(
 	})
 
 	
-We can change war level 
+We can change restriction level 
 Example in validation.json file
-

@@ -1,0 +1,20 @@
+To see all posible configurations
+
+-- mongod --help
+
+Where dataFiles will be set
+-- mongod --dbpath /home/juliwolf/data/db
+
+Where logFiles will be set
+-- mongod --logpath /home/juliwolf/data/log/log.log
+
+
+Run mongo like a server in background
+-- mongod --fork --logpath /home/juliwolf/data/log/log.log
+
+// To stop service
+use admin
+db.shutdownServer()
+
+//Use config file
+mongod -f /home/juliwolf/Programs/mongodb/bin/mongod.cfg

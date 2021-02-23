@@ -43,3 +43,21 @@ Importing data
 
 
 /*************************** READ ****************************
+-- db.movies.findOne() // returns first document
+-- db.movies.find().pretty() // returns cursor (first 20 documents)
+-- db.movies.find({name: "The Last Ship"}).pretty() // where name = "The Last Ship"
+
+--------------------------------------------------
+Comparison
+
+-- db.movies.find({runtime: {$eq: 60}}) == > db.movies.find({runtime: 60}) // equal
+-- db.movies.find({runtime: {$ne: 60}}) // not equeal
+-- db.movies.find({runtime: {$lt: 40}}) // lower than
+-- db.movies.find({runtime: {$lte: 40}}) // lower or equal
+
+Search by embedded documents
+-- db.movies.find({"rating.average": {$gt: 7}})
+
+Search in array operations
+-- db.movies.find({genres: "Drama"}) // genres is array and has not only one element
+-- db.movies.find({genres: ["Drama"]}) // genres is array and have only one element - "Drama"

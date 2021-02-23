@@ -19,6 +19,7 @@ Use Custom ID
 
 --------------------------------------------------
 WriteConcern
+
 w: // 1/0 	1 - give time to the server to make action and return result
 			0 - just make a request to make something
 
@@ -69,6 +70,7 @@ Search in array operations
 
 --------------------------------------------------
 Logical
+
 -- db.movies.find({$or: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}) // lower than 5 or greater than 9.3
 -- db.movies.find({$nor: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}) // not lower than 5 or not greater than 9.3
 
@@ -78,3 +80,61 @@ Logical
 -- db.movies.find({$and: [{genres: "Drama"}, {genres: "Horror"}]}) // if names of options are equal
 
 -- db.movies.find({runtime: {$not: {$eq: 60}}}) // not equal to 60
+
+
+--------------------------------------------------
+Element Operators
+
+-- db.users.find({age: {$exists: true}}) // where document has age option !!! also if options is null
+-- db.users.find({age: {$exists: true, $gt: 30}}) // where document has age option and greater than 30
+
+-- db.users.find({age: {$exists: true, $ne: null}}) // exists and not null
+
+
+-- db.users.find({phone: {$type: ["double", "string"]}}) // double or string
+-- db.users.find({phone: {$type: "double"}}) // double
+
+
+--------------------------------------------------
+Evaluation
+
+
+Search by words
+-- db.movies.find({summary: {$regex: /musical/}})
+
+Where volume value is greater than target value
+-- db.sales.find({$expr: {$gt: ["$volume", "$target"]}})
+
+
+// Count volume and then compare
+if(volume >= 190){
+	volume -= 10
+}else {
+	volume
+}
+
+
+if(target > volume)
+-- db.sales.find(
+	{
+		$expr: {
+			$gt: [
+				{
+					$cond: {
+						if: {
+							$gte: ["$volume", 190]
+						}, 
+						then: {
+							$subtract: ["$volume", 10]
+						}, 
+							else: "$volume"
+					}
+				}, 
+				"$target"]
+		}
+	}
+)
+
+
+--------------------------------------------------
+Evaluation

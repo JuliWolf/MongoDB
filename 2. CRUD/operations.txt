@@ -184,3 +184,69 @@ Projection
 
 // Only first 2 elements in genres array
 -- db.movies.find({"rating.average": {$gt: 9}}, {"genres": {$slice: 2}, name: 1})
+
+
+/*************************** UPDATE ****************************
+
+Update first 
+Overwrite property
+-- db.users.updateOne({_id: ObjectId("6034dd28b1accd28474ad617")}, 
+	{$set: {hobbies: [{title: "Sports", frequency: 5}, {title: "Cooking", frequency: 3}, {title: "Hiking", frequency: 1}]}})
+
+Update many elements
+-- db.users.updateMany({"hobbies.title": "Sports"}, {$set: {isSporty: true}})
+
+Update multiple fields
+-- db.users.updateOne({_id: ObjectId("6034dd28b1accd28474ad617")}, {$set: {age: 40, phone: 464986143}})
+
+
+Increment value
+-- db.users.updateOne({name: "Manuel"}, {$inc: {age: 1}})
+
+Combine commands
+-- db.users.updateOne({name: "Manuel"}, {$inc: {age: 1}, $set: {isSporty: false}})
+
+Update only if age hier than 35
+-- db.users.updateOne({name: "Chris"}, {$min: {age: 35}})
+
+Update only if age lower than 35
+-- db.users.updateOne({name: "Chris"}, {$max: {age: 35}})
+
+Multiplate age
+-- db.users.updateOne({name: "Chris"}, {$mul: {age: 1.1}})
+
+Get rig of fields
+-- db.users.updateMany({isSporty: true}, {$unset: {phone: ""}})
+
+Rename fields
+-- db.users.updateMany({}, {$rename: {age: "totalAge"}})
+
+Create if not exists
+-- db.users.updateOne({name: "Maria"}, {$set: {age: 29, hobbies: [{title: "Good Food", frequency: 3}]}}, {upsert: true})
+
+Update only selected fields with new field
+-- db.users.updateMany({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}}, {$set: {"hobbies.$.highFrequency": true}})
+
+Update all embedded documents
+-- db.users.updateMany({totalAge: {$gt: 30}}, {$inc: {"hobbies.$[].frequency": -1}})
+
+Update only certain embedded documents
+-- db.users.updateMany(
+	{"hobbies.frequency": {$gt: 2}}, {$set: {"hobbies.$[el].goodFrequency": true}}, 
+	{arrayFilters: [{"el.frequency": {$gt: 2}}]}
+)
+
+Add element in array field
+-- db.users.updateOne({name: "Maria"}, {$push: {hobbies: {title: "Sports", frequency: 2}}})
+
+Add multiple elements in array field and sort by frequency
+-- db.users.updateOne({name: "Maria"}, {$push: {hobbies: {$each: [{title: "Good Wine", frequency: 1}, {title: "Hiking", frequency: 2}], $sort: {frequency: -1}}}})
+
+Delete one elements from array
+-- db.users.updateOne({name: "Maria" }, {$pull: {hobbies: {title: "Hiking"}}})
+
+Remove last item of array
+-- db.users.updateOne({name: "Chris"}, {$pop: {hobbies: 1}})
+
+Add unique value
+-- db.users.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})

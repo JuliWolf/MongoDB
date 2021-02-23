@@ -165,3 +165,19 @@ Sorting
 
 // Limit the amount of documents
 -- db.movies.find().sort({"rating.average": 1, runtime: -1}).skip(10).limit(10)
+
+
+--------------------------------------------------
+Projection
+
+// Only specified fields will be returned and _id
+-- db.movies.find({}, {name: 1, genres: 1, runtime: 1, rating: 1})
+
+// Control embedded documents
+-- db.movies.find({}, {name: 1, genres: 1, runtime: 1, "schedule.time": 1})
+
+// Show only Drama in genres
+-- db.movies.find({genres: "Drama"}, {"genres.$": 1})
+
+// Search for documents with "Drama" and returns only genres: "Horror"
+-- db.movies.find({genres: "Drama"}, {"genres": {$elemMatch: {$eq: "Horror"}}})

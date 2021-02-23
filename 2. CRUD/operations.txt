@@ -181,3 +181,6 @@ Projection
 
 // Search for documents with "Drama" and returns only genres: "Horror"
 -- db.movies.find({genres: "Drama"}, {"genres": {$elemMatch: {$eq: "Horror"}}})
+
+// Only first 2 elements in genres array
+-- db.movies.find({"rating.average": {$gt: 9}}, {"genres": {$slice: 2}, name: 1})

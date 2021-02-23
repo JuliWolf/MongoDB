@@ -61,3 +61,20 @@ Search by embedded documents
 Search in array operations
 -- db.movies.find({genres: "Drama"}) // genres is array and has not only one element
 -- db.movies.find({genres: ["Drama"]}) // genres is array and have only one element - "Drama"
+
+
+-- db.movies.find({runtime: {$in: [30, 42]}}) // search for runtime equal 30 and 42
+-- db.movies.find({runtime: {$nin: [30, 42]}}) // search for runtime not equal 30 and 42
+
+
+--------------------------------------------------
+Logical
+-- db.movies.find({$or: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}) // lower than 5 or greater than 9.3
+-- db.movies.find({$nor: [{"rating.average": {$lt: 5}}, {"rating.average": {$gt: 9.3}}]}) // not lower than 5 or not greater than 9.3
+
+*-- db.movies.find({$and: [{"rating.average": {$gt: 9}}, {genres: "Drama"}]}) // where  rating.average greater than 9 and genres has Drama
+-- db.movies.find({"rating.average": {$gt: 9}, genres: "Drama"}) the same as *
+
+-- db.movies.find({$and: [{genres: "Drama"}, {genres: "Horror"}]}) // if names of options are equal
+
+-- db.movies.find({runtime: {$not: {$eq: 60}}}) // not equal to 60

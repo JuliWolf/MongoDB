@@ -1,4 +1,4 @@
---------------------------------------------------
+/*************************** INSERT/CREATE ****************************
 .insert // Allow to add one or multiple documents
 .insertOne // Allow to add one document
 .insertMany // Allow to add many documents
@@ -7,14 +7,14 @@
 --------------------------------------------------
 Use Custom ID
 
-db.hoddies.insertMany([{_id: "sports", name: "Sports"}, {_id: "cooking", name: "Cooking"}, {_id: "cars", name: "cars"}])
+-- db.hoddies.insertMany([{_id: "sports", name: "Sports"}, {_id: "cooking", name: "Cooking"}, {_id: "cars", name: "cars"}])
 
 
 // Will throw an error
-db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}])
+-- db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}])
 
 // To change the way of inserting in db
-db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}], {ordered: false})
+-- db.hoddies.insertMany([{_id: "yoga", name: "Yoga"}, {_id: "cooking", name: "Cooking"}, {_id: "hiking", name: "Hiking"}], {ordered: false})
 
 
 --------------------------------------------------
@@ -27,4 +27,19 @@ j:  // by default is false or underfined
 
 wtimeout: // how long server will wait to insert data
 
-db.persons.insertOne({name: "Aliya", age: 22}, {writeConcern: {w: 1, j: true, wtimeout: 41}})
+-- db.persons.insertOne({name: "Aliya", age: 22}, {writeConcern: {w: 1, j: true, wtimeout: 41}}) 
+
+
+--------------------------------------------------
+Importing data
+
+-- mongoimport tv-shows.json -d movieData -c movies --jsonArray --drop
+
+-d movieData // name of database
+-c movies // name of collection
+--jsonArray // multiple documents
+--drop // drop if document exists
+
+
+
+/*************************** READ ****************************

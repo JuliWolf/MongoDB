@@ -137,4 +137,16 @@ if(target > volume)
 
 
 --------------------------------------------------
-Evaluation
+Quering Arrays
+
+-- db.users.find({"hobbies.title": "Sports"}) // search in embedded document {title: "Something", frequency: 2}
+
+-- db.users.find({hobbies: {$size: 3}}) // search by array lenth
+
+-- db.moviesstarts.find({genre: {$all: ["action", "thriller"]}}) // find all documents where genre has "action", "thriller" not matter the order
+
+// Serarch not in one embedded document
+--  db.users.find({$and: [{"hobbies.title": "Sports"}, {"hobbies.frequency": {$gte: 2}}]}) where hobbies.title = "Sports" and hobbies.frequency >= 2
+
+// Search in one embedded document
+-- db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}})

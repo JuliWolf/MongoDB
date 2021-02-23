@@ -150,3 +150,18 @@ Quering Arrays
 
 // Search in one embedded document
 -- db.users.find({hobbies: {$elemMatch: {title: "Sports", frequency: {$gte: 3}}}})
+
+
+--------------------------------------------------
+Sorting
+
+1 - ASC
+-1 - DESC
+-- db.movies.find().sort({"rating.average": -1})
+-- db.movies.find().sort({"rating.average": 1, runtime: -1})
+
+// To skip some elements in pagination
+-- db.movies.find().sort({"rating.average": 1, runtime: -1}).skip(10)
+
+// Limit the amount of documents
+-- db.movies.find().sort({"rating.average": 1, runtime: -1}).skip(10).limit(10)

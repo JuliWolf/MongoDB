@@ -250,3 +250,22 @@ Remove last item of array
 
 Add unique value
 -- db.users.updateOne({name: "Maria"}, {$addToSet: {hobbies: {title: "Hiking", frequency: 2}}})
+
+
+/*************************** DELETE ****************************
+
+Delete one document
+-- db.users.deleteOne({name: "Chris"})
+
+Delete multiple elements
+-- db.users.deleteMany({totalAge: {$exists: false}, isSporty: true})
+
+
+Delete all documents in collection
+-- db.users.deleteMany({})
+
+Delete collection
+-- db.users.drop()
+
+Delete database
+-- db.dropDatabase()

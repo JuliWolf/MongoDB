@@ -1,0 +1,38 @@
+To see the plan of executing
+
+-- db.contacts.explain().find({"dob.age": {$gt: 60}}).count()
+-- db.contacts.explain("executionStats").find({"dob.age": {$gt: 60}}).count() // wih more information
+
+
+Create index
+-- db.contacts.createIndex({"dob.age": 1}) // ASC
+
+
+Drop index
+-- db.contacts.dropIndex({"dob.age": 1})
+
+
+Compound index
+-- db.contacts.createIndex({"dob.age": 1, gender: 1})
+-- db.contacts.explain().find({"dob.age": 35, gender: "male"})
+
+Get all indexes
+-- db.contacts.getIndexes()
+
+
+Create index
+-- db.contacts.createIndex({email: 1}, {unique: true}) // only unique value
+
+
+Index for dob.age where gender is male
+-- db.contacts.createIndex({"dob.age": 1}, {partialFilterExpression: {gender: "male"}})
+To use index all values should be used
+-- db.contacts.explain().find({"dob.age": {$gt: 60}, gender: "male"})
+
+
+Create unique index only if value exists
+-- db.users.createIndex({email: 1}, {unique: true, partialFilterExpression: {email: {$exists: true}}})
+
+
+Special indeses for time value
+-- db.sessions.createIndex({createdAt: 1}, {expireAfterSeconds: 10}) // delete documents after some time *** only added after

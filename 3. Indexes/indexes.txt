@@ -1,38 +1,127 @@
+/********************************
 To see the plan of executing
 
 -- db.contacts.explain().find({"dob.age": {$gt: 60}}).count()
 -- db.contacts.explain("executionStats").find({"dob.age": {$gt: 60}}).count() // wih more information
 
 
+/********************************
 Create index
 -- db.contacts.createIndex({"dob.age": 1}) // ASC
 
 
+/********************************
 Drop index
 -- db.contacts.dropIndex({"dob.age": 1})
 
 
+/********************************
 Compound index
 -- db.contacts.createIndex({"dob.age": 1, gender: 1})
 -- db.contacts.explain().find({"dob.age": 35, gender: "male"})
 
+
+/********************************
 Get all indexes
 -- db.contacts.getIndexes()
 
 
+/********************************
 Create index
 -- db.contacts.createIndex({email: 1}, {unique: true}) // only unique value
 
 
+/********************************
 Index for dob.age where gender is male
 -- db.contacts.createIndex({"dob.age": 1}, {partialFilterExpression: {gender: "male"}})
 To use index all values should be used
 -- db.contacts.explain().find({"dob.age": {$gt: 60}, gender: "male"})
 
 
+/********************************
 Create unique index only if value exists
 -- db.users.createIndex({email: 1}, {unique: true, partialFilterExpression: {email: {$exists: true}}})
 
 
+/********************************
 Special indeses for time value
 -- db.sessions.createIndex({createdAt: 1}, {expireAfterSeconds: 10}) // delete documents after some time *** only added after
+
+
+
+!NOTE: 
+Check mileseconds process time
+# of Keys in index Examined
+# of Dociments Examined
+# of Documents Returned
+
+
+/********************************
+Covered Query
+Create Index on name property
+-- db.customers.explain("executionStats").find({name: "Max"}, {_id: 0, name: 1})
+
+
+/********************************
+Reject index
+if we have two indexes
+	- for name
+	- age and name
+	- search for name and age
+
+in Reject indexes we can see name index
+
+
+/********************************
+To see all indexes plans
+-- db.customers.explain("allPlansExecution").find({name: "Max", age: 30})
+
+
+/********************************
+Array indexes
+-- db.contacts.insertOne({name: "Max",hobbies: ["Cooking", "Sports"], addresses: [{street: "Main Street"}, {street: "Second Street"}]})
+-- db.contacts.createIndex({hobbies: 1})
+
+
+-- db.contacts.createIndex({addresses: 1})
+-- db.contacts.explain("executionStats").find({addresses: {street: "Main Street"}})
+
+
+/********************************
+MultiKey
+-- db.contacts.createIndex({"addresses.street": 1})
+-- db.contacts.explain("executionStats").find({"addresses.street": "Main Street"})
+
+!NOTE:
+Index can include only one array index
+
+
+/********************************
+Text indexes
+-- db.products.insertMany([{title: "A book", description: "This is an awesome book"}, {title: "T-shirt", description: "This T-shirt is red"}])
+-- db.products.createIndex({description: "text"})
+-- db.products.find({$text: {$search: "red awesome"}}).pretty() // returns two documents
+-- db.products.find({$text: {$search: "\"red awesome"\"}}).pretty() // search for both words in one document
+
+See score
+-- db.products.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).pretty()
+Sort 
+-- db.products.find({$text: {$search: "awesome t-shirt"}}, {score: {$meta: "textScore"}}).sort({score: {$meta: "textScore"}}).pretty()
+
+!NOTE:
+	only one text index per collection
+
+
+To create text index on two properties
+-- db.products.createIndex({title: "text", description: "text"})
+-- db.products.find({$text: {$search: "ship"}})
+
+Exclude words
+-- db.products.find({$text: {$search: "awesome -t-shirt"}}).pretty() // -
+
+
+Configue index
+-- db.products.createIndex({title: "text", description: "text"}, {default_language: "english", weights: {title: 1, description: 10}})
+
+-- db.products.find({$text: {$search: "", $language: "german"}}).pretty()
+-- db.products.find({$text: {$search: "", $caseSensitive: true}}).pretty()

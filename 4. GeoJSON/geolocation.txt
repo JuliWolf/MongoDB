@@ -1,0 +1,23 @@
+-- db.places.insertOne({name: "London Moll", location: {type: "Point", coordinates: [30.4289532, 59.9118608]}}) // [long, lat]
+
+To find near places
+Add special index
+-- db.places.createIndex({location: "2dsphere"})
+search
+-- db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [30.4289532, 59.9118608]}}}})
+
+Max and min
+-- db.places.find({location: {$near: {$geometry: {type: "Point", coordinates: [30.4289532, 59.9118608]}, $maxDistance: 30, $minDistance: 10}}})
+
+Find documents within the polygon
+-- db.places.find({location: {$geoWithin: {$geometry: {type: "Polygon", coordinates: [[p1,p2,p3,p4,p1]]}}}})
+Where p1 = [23,43423, -49,32344]
+
+
+Create Area
+-- db.areas.insertOne({name: "test polygon", area: {type: "Polygon", coordinates: [[p1,p2,p3,p4,p1]]}})
+-- db.areas.createIndex({area: "2dsphere"})
+-- db.areas.find({area: {$geoIntersects: {$geometry: {type: "Point", coordinates: [-123,4334, 37.654664]}}}}) // in which area
+
+Circle around the Point
+-- db.places.find({location: {$geoWithin: {$centerSphere: [[-123.434243, 67.3234234, 1/6378.1]]}}})

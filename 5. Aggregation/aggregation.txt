@@ -1,0 +1,187 @@
+/* ********************************************************* */
+Like find method aggregate can filter collections
+-- db.persons.aggregate([{$match: {gender: "female"} }])
+
+
+/* ********************************************************* */
+Group data by some options
+-- db.persons.aggregate([
+	{ $match: { gender: "female" } },
+	{ $group: { _id: {state: "$location.state"}, totalPersons: {$sum: 1} } }
+])
+
+
+/* ********************************************************* */
+With sorting by grouped field
+-- db.persons.aggregate([
+	{ $match: { gender: "female" } },
+	{ $group: { _id: { state: "$location.state" }, totalPersons: { $sum: 1 } } },
+	{ $sort: { totalPersons: -1 } }
+]).pretty()
+
+
+/* ********************************************************* */
+Add new field
+-- db.persons.aggregate([
+	{ $project: { _id: 0, gender: 1, fullName: {$concat: ["$name.first", " " ,"$name.last"]}}}
+]).pretty()
+
+
+/* ********************************************************* */
+With formatting
+
+All name uppercase
+-- db.persons.aggregate([
+	{
+		$project: {
+			_id: 0,
+			gender: 1,
+			fullName: {
+				$concat: [{$toUpper: "$name.first"}, " ", {$toUpper: "$name.last"}]
+			}
+		}
+	}
+]).pretty()
+
+First Sign in Upper case
+-- db.persons.aggregate([
+	{
+		$project: {
+			_id: 0,
+			gender: 1,
+			fullName: {
+				$concat: [
+					{ $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+					{ $substrCP: ['$name.first', 1, { $subtract: [{ $strLenCP: "$name.first" }, 1] } ]},
+					" ",
+					{ $toUpper: "$name.last" }
+				]
+			}
+		}
+	}
+]).pretty()
+
+
+/* ********************************************************* */
+With double projection
+-- db.persons.aggregate([
+	{
+		$project: {
+			_id: 0, name: 1, email: 1, location: {
+				type: "Point", coordinates: [
+					"$location.coordinates.longitude",
+					"$location.coordinates.latitude"
+	] } } },
+	{
+		$project: {
+			gender: 1,
+			email: 1,
+			location: 1,
+			fullName: {
+				$concat: [
+					{ $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+					{ $substrCP: ['$name.first', 1, { $subtract: [{ $strLenCP: "$name.first" }, 1] } ]},
+					" ",
+					{ $toUpper: "$name.last" }
+				]
+			}
+		}
+	}
+]).pretty()
+
+
+change type of value
+-- db.persons.aggregate([{
+		$project: {
+			_id: 0, name: 1, email: 1, location: {
+				type: "Point", coordinates: [
+					{ $convert: { input: "$location.coordinates.longitude", to: "double", onError: 0, onNull: 0 } },
+					{ $convert: { input: "$location.coordinates.latitude", to: "double", onError: 0, onNull: 0 } }] } } },
+	{
+		$project: {
+			gender: 1,
+			email: 1,
+			location: 1,
+			fullName: {
+				$concat: [
+					{ $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+					{ $substrCP: ['$name.first', 1, { $subtract: [{ $strLenCP: "$name.first" }, 1] } ]},
+					" ",
+					{ $toUpper: "$name.last" }
+				]
+			}
+		}
+	}
+]).pretty()
+
+
+/* ********************************************************* */
+Add fields to top level
+-- db.persons.aggregate([{
+	$project: {
+		_id: 0,
+		name: 1,
+		email: 1,
+		birthdate: { $convert: { input: "$dob.date", to: "date" } },
+		age: "$dob.age",
+		location: {
+			type: "Point", coordinates: [
+				{ $convert: { input: "$location.coordinates.longitude", to: "double", onError: 0, onNull: 0 } },
+				{ $convert: { input: "$location.coordinates.latitude", to: "double", onError: 0, onNull: 0 } }] } } },
+{
+	$project: {
+		gender: 1,
+		email: 1,
+		location: 1,
+		birthdate: 1,
+		age: 1,
+		fullName: {
+			$concat: [
+				{ $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+				{ $substrCP: ['$name.first', 1, { $subtract: [{ $strLenCP: "$name.first" }, 1] } ]},
+				" ",
+				{ $toUpper: "$name.last" }
+			]
+		}
+	}
+}
+]).pretty()
+
+
+
+/* ********************************************************* */
+Group by year
+
+-- db.persons.aggregate([{
+	$project: {
+		_id: 0,
+		name: 1,
+		email: 1,
+		birthdate: { $toDate: "$dob.date" },
+		age: "$dob.age",
+		location: {
+			type: "Point", coordinates: [
+				{ $convert: { input: "$location.coordinates.longitude", to: "double", onError: 0, onNull: 0 } },
+				{ $convert: { input: "$location.coordinates.latitude", to: "double", onError: 0, onNull: 0 } }] } } },
+{
+	$project: {
+		gender: 1,
+		email: 1,
+		location: 1,
+		birthdate: 1,
+		age: 1,
+		fullName: {
+			$concat: [
+				{ $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+				{ $substrCP: ['$name.first', 1, { $subtract: [{ $strLenCP: "$name.first" }, 1] } ]},
+				" ",
+				{ $toUpper: "$name.last" }
+			]
+		}
+	}
+	},
+	{
+		$group: { _id: { birthYear: { $isoWeekYear: "$birthdate" } }, numPersons: {$sum: 1} }
+	},
+	{ $sort: {numPersons: -1}}
+]).pretty()

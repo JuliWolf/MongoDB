@@ -185,3 +185,192 @@ Group by year
 	},
 	{ $sort: {numPersons: -1}}
 ]).pretty()
+
+
+
+/* ********************************************************* */
+Push elements to array field
+-- db.friends.aggregate([
+	{$group: {_id: {age: "$age"}, allHobbies: {$push: "$hobbies"} } }
+]).pretty()
+
+
+To extract elements from array - unwind
+To avoid dublicates - addToSet
+-- db.friends.aggregate([
+	{$unwind: "$hobbies"},
+	{$group: {_id: {age: "$age"}, allHobbies: {$addToSet: "$hobbies"} } }
+]).pretty()
+
+
+
+/* ********************************************************* */
+Projection for array
+-- db.friends.aggregate([
+	{ $project: { _id: 0, examScore: {$slice: ["$examScores", 1] } } }
+]).pretty()
+
+
+
+/* ********************************************************* */
+Get length of array
+-- db.friends.aggregate([
+	{ $project: { _id: 0, numScores: {$size: "$examScores"} } }
+]).pretty()
+
+
+
+/* ********************************************************* */
+Filter documents fileds examScores > 60
+-- db.friends.aggregate([
+	{
+		$project: {
+			_id: 0,
+			examScores: {
+				$filter: {
+					input: "$examScores",
+					as: "sc",
+					cond: { $gt: ["$$sc.score", 60] }
+				}
+			}
+		}
+	}
+]).pretty()
+
+
+
+/* ********************************************************* */
+Show only hiest examScores
+-- db.friends.aggregate([
+	{ $unwind: "$examScores" },
+	{ $project: {_id: 1, name: 1, age: 1, score: "$examScores.score"}},
+	{ $sort: { score: -1 } },
+	{ $group: { _id: "$_id", maxScore: { $max: "$score" }, name: { $first: "$name" } } },
+	{ $sort: { maxScore: -1 } }
+]).pretty()
+
+
+
+/* ********************************************************* */
+Aggregate by categories
+-- db.persons.aggregate([
+	{
+		$bucket: {
+			groupBy: "$dob.age",
+			boundaries: [0, 18, 30, 50, 80, 120],
+			output: {
+				numPersons: {$sum: 1},
+				averageAge: {$avg: "$dob.age"},
+			}
+		}
+	}
+]).pretty()
+
+
+Auto sorting
+-- db.persons.aggregate([
+	{
+		$bucketAuto: {
+			groupBy: "$dob.age",
+			buckets: 5,
+			output: {
+				numPersons: {$sum: 1},
+				averageAge: {$avg: "$dob.age"},
+			}
+		}
+	}
+]).pretty()
+
+
+
+/* ********************************************************* */
+Find 10 persons with the lowest birthDate and get 10 (Order is important)
+-- db.persons.aggregate([
+	{ $project: { _id: 0, name: 1, birthdate: { $toDate: "$dob.date" } } },
+	{ $sort: { birthdate: 1 } },
+	{ $limit: 10 }
+]).pretty()
+
+
+
+/* ********************************************************* */
+save into new collections
+
+-- db.persons.aggregate([
+    {
+      $project: {
+        _id: 0,
+        name: 1,
+        email: 1,
+        birthdate: { $toDate: '$dob.date' },
+        age: "$dob.age",
+        location: {
+          type: 'Point',
+          coordinates: [
+            {
+              $convert: {
+                input: '$location.coordinates.longitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            },
+            {
+              $convert: {
+                input: '$location.coordinates.latitude',
+                to: 'double',
+                onError: 0.0,
+                onNull: 0.0
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      $project: {
+        gender: 1,
+        email: 1,
+        location: 1,
+        birthdate: 1,
+        age: 1,
+        fullName: {
+          $concat: [
+            { $toUpper: { $substrCP: ['$name.first', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.first',
+                1,
+                { $subtract: [{ $strLenCP: '$name.first' }, 1] }
+              ]
+            },
+            ' ',
+            { $toUpper: { $substrCP: ['$name.last', 0, 1] } },
+            {
+              $substrCP: [
+                '$name.last',
+                1,
+                { $subtract: [{ $strLenCP: '$name.last' }, 1] }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    { $out: "transformedPersons" }
+  ]).pretty();
+
+
+
+/* ********************************************************* */
+Work with geoData - geoNear have to be first and index needed to be placed
+-- db.transformedPersons.aggregate([
+	{
+		$geoNear: {
+			near: { type: "Point", coordinates: [-18.4, -42.8] },
+			maxDistance: 60000000,
+			query: { age: {$gt: 30} },
+			distanceField: "distance"
+		}
+	},
+]).pretty()

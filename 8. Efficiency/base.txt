@@ -1,0 +1,34 @@
+--------------------------------------------------
+Capped - can control how many documents will be saved
+-- db.createCollection("capped", {capped:true, size: 10000, max: 3})
+
+Add 3 documents
+{ "_id" : ObjectId("6069d089b24877ae7407b0c1"), "name" : "Julia" }
+{ "_id" : ObjectId("6069d08eb24877ae7407b0c2"), "name" : "Anna" }
+{ "_id" : ObjectId("6069d093b24877ae7407b0c3"), "name" : "Igor" }
+
+To use basic sort
+-- db.capped.find().sort({$natural: -1}).pretty()
+
+Add one more document - will delete the most oldest one
+{ "_id" : ObjectId("6069d08eb24877ae7407b0c2"), "name" : "Anna" }
+{ "_id" : ObjectId("6069d093b24877ae7407b0c3"), "name" : "Igor" }
+{ "_id" : ObjectId("6069d0e2b24877ae7407b0c4"), "name" : "Maria" }
+
+
+--------------------------------------------------
+Replica Sets
+
+Use for backup and fault tolerancy
+Если что-то случается с основным потоком, то база переключается на вспомогательный
+
+to improve read performance
+
+
+--------------------------------------------------
+Sharding (Horizontal Scaling)
+
+separate servers (not replicated)
+
+
+

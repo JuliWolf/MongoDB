@@ -1,0 +1,13 @@
+systemLog:
+   destination: file
+   path: "/home/juliwolf/data/log/log.log"
+   logAppend: true
+storage:
+   dbPath: "/home/juliwolf/data/db"
+net:
+   tls:
+      mode: requireTLS
+      certificateKeyFile: /home/juliwolf/Downloads/mongod.pem
+net:
+   bindIp: localhost
+   port: 27017

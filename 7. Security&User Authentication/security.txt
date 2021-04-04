@@ -1,0 +1,23 @@
+// Run db with --auth key
+--mongod--auth--dbpath / home / juliwolf / data / db
+
+// Create User
+-- use admin
+-- db.createUser({user: 'Julia', pwd: '123321', roles: ["userAdminAnyDatabase"]})
+
+// Create user for certain db
+-- use shop
+-- db.createUser({user: 'appdev', pwd: 'dev', roles: ["readWrite"]})
+
+// Connect to database through certain user
+-- mongo -u Julia -p 123321 --authenticationDatabase admin
+
+// Update User
+-- db.updateUser('appdev', {roles: ["readWrite", {role: "readWrite", db: 'blog'}]})
+
+// See user roles
+-- db.getUser('appdev')
+
+
+// run mongod with tsl encryption
+-- mongod --config /home/juliwolf/Programs/mongodb/bin/mongod.cfg

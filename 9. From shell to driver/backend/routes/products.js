@@ -63,10 +63,11 @@ router.get('/', (req, res, next) => {
 
   const products = [];
 
-  db.getDb().db()
+  db.getDb()
+    .db()
     .collection('products')
     .find()
-    // .sort({ price: -1 })
+    .sort({ price: -1 })
     // .skip((queryPage - 1) * pageSize)
     // .limit(pageSize)
     .forEach(productDoc => {
@@ -83,7 +84,8 @@ router.get('/', (req, res, next) => {
 
 // Get single product
 router.get('/:id', (req, res, next) => {
-  db.getDb().db()
+  db.getDb()
+    .db()
     .collection('products')
     .findOne({ _id: new ObjectId(req.params.id) })
     .then(productDoc => {
@@ -105,7 +107,8 @@ router.post('', (req, res, next) => {
     image: req.body.image
   };
 
-  db.getDb().db()
+  db.getDb()
+    .db()
     .collection('products').insertOne(newProduct)
     .then(result => {
       res.status(201).json({ message: 'Product added', productId: result.insertedId });
@@ -125,7 +128,8 @@ router.patch('/:id', (req, res, next) => {
     image: req.body.image
   };
 
-  db.getDb().db()
+  db.getDb()
+    .db()
     .collection('products')
     .updateOne({ _id: new ObjectId(req.params.id) }, {
       $set: updatedProduct
@@ -142,7 +146,8 @@ router.patch('/:id', (req, res, next) => {
 // Delete a product
 // Requires logged in user
 router.delete('/:id', (req, res, next) => {
-  db.getDb().db()
+  db.getDb()
+    .db()
     .collection('products')
     .deleteOne({ _id: new ObjectId(req.params.id) })
     .then(result => {
